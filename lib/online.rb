@@ -15,7 +15,7 @@ require 'uri'
 # License:: MIT
 module Kernel
   # Cache for online connectivity checks
-  module OnlineCache
+  module OnlineOrOffline
     class << self
       attr_accessor :cache, :mutex
     end
@@ -87,8 +87,8 @@ module Kernel
   # @note Results are cached with a default TTL of 5 minutes to reduce network requests
   def online?(uri: 'http://www.google.com', ttl: 300)
     key = uri.to_s
-    OnlineCache.mutex.synchronize do
-      entry = OnlineCache.cache[key]
+    OnlineOrOffline.mutex.synchronize do
+      entry = OnlineOrOffline.cache[key]
       return entry[:status] if entry && (Time.now - entry[:time]) < ttl
       status =
         Timeout.timeout(10) do
@@ -98,7 +98,7 @@ module Kernel
           Errno::EHOSTUNREACH, Errno::EINVAL, Errno::EADDRNOTAVAIL
           false
         end
-      OnlineCache.cache[key] = { status: status, time: Time.now }
+      OnlineOrOffline.cache[key] = { status: status, time: Time.now }
       status
     end
   end

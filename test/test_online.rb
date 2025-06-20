@@ -13,7 +13,7 @@ require_relative '../lib/online'
 # License:: MIT
 class TestOnline < Minitest::Test
   def setup
-    Kernel::OnlineCache.cache = {}
+    Kernel::OnlineOrOffline.cache = {}
   end
 
   def test_when_online
