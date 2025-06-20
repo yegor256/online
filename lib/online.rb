@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: MIT
 
 require 'net/http'
+require 'timeout'
+require 'uri'
 
 # Checks whether we are online now.
 #

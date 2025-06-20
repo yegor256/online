@@ -22,5 +22,6 @@ Gem::Specification.new do |s|
   s.executables = s.files.grep(%r{^bin/}) { |f| File.basename(f) }
   s.rdoc_options = ['--charset=UTF-8']
   s.extra_rdoc_files = ['README.md', 'LICENSE.txt']
+  s.add_dependency 'timeout', '~>0.4'
   s.metadata['rubygems_mfa_required'] = 'true'
 end
