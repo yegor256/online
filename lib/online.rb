@@ -14,6 +14,15 @@ require 'uri'
 # Copyright:: Copyright (c) 2024-2025 Yegor Bugayenko
 # License:: MIT
 module Kernel
+  # Cache for online connectivity checks
+  module OnlineCache
+    class << self
+      attr_accessor :cache, :mutex
+    end
+    @cache = {}
+    @mutex = Mutex.new
+  end
+
   # Checks whether the system has an active internet connection by attempting
   # to connect to a specified URI.
   #
@@ -22,6 +31,7 @@ module Kernel
   # or for implementing offline-mode functionality in applications.
   #
   # @param uri [String] the URI to check connectivity against (default: 'http://www.google.com')
+  # @param ttl [Integer] time-to-live for cached results in seconds (default: 300 seconds = 5 minutes)
   # @return [Boolean] true if the URI is reachable and returns HTTP success, false otherwise
   #
   # @example Basic usage - check internet connectivity
@@ -36,6 +46,11 @@ module Kernel
   #     # Proceed with GitHub API calls
   #   else
   #     # Use cached data or show offline message
+  #   end
+  #
+  # @example Check with custom cache TTL (10 minutes)
+  #   if online?(ttl: 600)
+  #     # Will use cached result for 10 minutes
   #   end
   #
   # @example Use in Minitest tests
@@ -69,14 +84,22 @@ module Kernel
   # @note The method has a 10-second timeout to prevent hanging on slow connections
   # @note Returns false for any network-related errors including timeouts, DNS failures,
   #   and unreachable hosts
-  def online?(uri: 'http://www.google.com')
-    Timeout.timeout(10) do
-      Net::HTTP.get_response(URI(uri)).is_a?(Net::HTTPSuccess)
-      true
-    rescue \
-      Timeout::Error, Timeout::ExitException, Socket::ResolutionError,
-      Errno::EHOSTUNREACH, Errno::EINVAL, Errno::EADDRNOTAVAIL
-      false
+  # @note Results are cached with a default TTL of 5 minutes to reduce network requests
+  def online?(uri: 'http://www.google.com', ttl: 300)
+    key = uri.to_s
+    OnlineCache.mutex.synchronize do
+      entry = OnlineCache.cache[key]
+      return entry[:status] if entry && (Time.now - entry[:time]) < ttl
+      status =
+        Timeout.timeout(10) do
+          Net::HTTP.get_response(URI(uri)).is_a?(Net::HTTPSuccess)
+        rescue \
+          Timeout::Error, Timeout::ExitException, Socket::ResolutionError,
+          Errno::EHOSTUNREACH, Errno::EINVAL, Errno::EADDRNOTAVAIL
+          false
+        end
+      OnlineCache.cache[key] = { status: status, time: Time.now }
+      status
     end
   end
 end
