@@ -17,7 +17,7 @@ First, install it:
 gem install online
 ```
 
-Then, you can use `online?` global function:
+Then, you can use the `online?` global function:
 
 ```ruby
 require 'online'
