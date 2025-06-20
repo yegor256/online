@@ -12,8 +12,15 @@ require_relative '../lib/online'
 # Copyright:: Copyright (c) 2024-2025 Yegor Bugayenko
 # License:: MIT
 class TestOnline < Minitest::Test
-  def test_basic_check
-    WebMock.enable_net_connect!
-    assert(online?)
+  def test_when_online
+    WebMock.disable_net_connect!
+    stub_request(:get, 'http://www.google.com/').to_return(body: '')
+    assert_predicate(self, :online?)
+  end
+
+  def test_when_offline
+    WebMock.disable_net_connect!
+    stub_request(:get, 'http://www.google.com/').to_raise(Socket::ResolutionError, 'failure')
+    refute_predicate(self, :online?)
   end
 end
