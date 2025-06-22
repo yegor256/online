@@ -26,6 +26,26 @@ if online?
 end
 ```
 
+You can also check a particular URL:
+
+```ruby
+if online?(uri: 'https://api.github.com')
+  # GitHub API is accessible
+end
+```
+
+The `online?()` function doesn't make an HTTP request on each call, but
+instead caches the previous result for five minutes. You can change this
+interval to three seconds, for example:
+
+```ruby
+if online?(ttl: 3)
+  # We are online, let's run integration tests!
+end
+```
+
+That's it.
+
 ## How to contribute
 
 Read
