@@ -95,7 +95,7 @@ module Kernel
           Net::HTTP.get_response(URI(uri)).is_a?(Net::HTTPSuccess)
         rescue \
           Timeout::Error, Timeout::ExitException, Socket::ResolutionError,
-          Errno::EHOSTUNREACH, Errno::EINVAL, Errno::EADDRNOTAVAIL
+          Errno::EHOSTUNREACH, Errno::EINVAL, Errno::EADDRNOTAVAIL, Errno::EBADF
           false
         end
       OnlineOrOffline.cache[key] = { status: status, time: Time.now }

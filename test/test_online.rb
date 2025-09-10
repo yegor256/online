@@ -16,6 +16,11 @@ class TestOnline < Minitest::Test
     Kernel::OnlineOrOffline.cache = {}
   end
 
+  def test_pings_live
+    WebMock.enable_net_connect!
+    assert(online? || !online?)
+  end
+
   def test_when_online
     WebMock.disable_net_connect!
     stub_request(:get, 'http://www.google.com/').to_return(body: '')
