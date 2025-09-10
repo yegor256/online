@@ -21,6 +21,12 @@ class TestOnline < Minitest::Test
     assert(online? || !online?)
   end
 
+  def test_pings_live_bad_address
+    WebMock.enable_net_connect!
+    uri = 'https://www.very-bad-domain-name-should-not-work-or-exist.bad'
+    assert(online?(uri:) || !online?(uri:))
+  end
+
   def test_when_online
     WebMock.disable_net_connect!
     stub_request(:get, 'http://www.google.com/').to_return(body: '')
