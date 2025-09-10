@@ -86,6 +86,8 @@ module Kernel
   #   and unreachable hosts
   # @note Results are cached with a default TTL of 5 minutes to reduce network requests
   def online?(uri: 'http://www.google.com', ttl: 300)
+    raise 'The URI is nil' if uri.nil?
+    raise 'The TTL is nil' if ttl.nil?
     key = uri.to_s
     OnlineOrOffline.mutex.synchronize do
       entry = OnlineOrOffline.cache[key]
