@@ -27,6 +27,12 @@ class TestOnline < Minitest::Test
     assert(online?(uri:) || !online?(uri:))
   end
 
+  def test_pings_incorrect_uri
+    WebMock.enable_net_connect!
+    uri = 'this is not a valid URI'
+    assert_raises(URI::InvalidURIError) { online?(uri:) }
+  end
+
   def test_when_online
     WebMock.disable_net_connect!
     stub_request(:get, 'http://www.google.com/').to_return(body: '')
