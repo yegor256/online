@@ -32,6 +32,7 @@ module Kernel
   #
   # @param uri [String] the URI to check connectivity against (default: 'https://www.google.com/generate_204')
   # @param ttl [Integer] time-to-live for cached results in seconds (default: 300 seconds = 5 minutes)
+  # @param timeout [Integer] open, read and write http timeout (default: 10 seconds)
   # @return [Boolean] true if the URI is reachable and returns HTTP success, false otherwise
   #
   # @example Basic usage - check internet connectivity
@@ -85,18 +86,28 @@ module Kernel
   # @note Returns false for any network-related errors including timeouts, DNS failures,
   #   and unreachable hosts
   # @note Results are cached with a default TTL of 5 minutes to reduce network requests
-  def online?(uri: 'https://www.google.com/generate_204', ttl: 300)
+  def online?(uri: 'https://www.google.com/generate_204', ttl: 300, timeout: 10)
     raise 'The URI is nil' if uri.nil?
     raise 'The TTL is nil' if ttl.nil?
     key = uri.to_s
     OnlineOrOffline.mutex.synchronize do
       entry = OnlineOrOffline.cache[key]
       return entry[:status] if entry && (Time.now - entry[:time]) < ttl
+      uri = URI(uri) unless uri.is_a?(URI)
       status =
-        Timeout.timeout(10) do
-          Net::HTTP.get_response(URI(uri)).is_a?(Net::HTTPSuccess)
+        begin
+          Net::HTTP.start(
+            uri.hostname,
+            uri.port,
+            use_ssl: uri.scheme == 'https',
+            open_timeout: timeout,
+            read_timeout: timeout,
+            write_timeout: timeout
+          ) do |http|
+            http.request_get(uri, {}).is_a?(Net::HTTPSuccess)
+          end
         rescue \
-          Timeout::Error, Timeout::ExitException, Socket::ResolutionError,
+          Socket::ResolutionError, Net::OpenTimeout, Net::ReadTimeout, Net::WriteTimeout,
           Errno::EHOSTUNREACH, Errno::EINVAL, Errno::EADDRNOTAVAIL, Errno::EBADF
           false
         end

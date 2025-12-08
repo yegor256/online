@@ -70,4 +70,10 @@ class TestOnline < Minitest::Test
     assert online?(uri: 'http://www.google.com')
     refute online?(uri: 'http://example.com')
   end
+
+  def test_when_timeout
+    WebMock.disable_net_connect!
+    stub_request(:get, 'https://www.google.com/generate_204').to_timeout
+    refute online?(timeout: 5)
+  end
 end

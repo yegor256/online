@@ -44,6 +44,13 @@ if online?(ttl: 3)
 end
 ```
 
+You can specify http timeout (in seconds) to prevent hanging on slow connections, for example:
+```ruby
+if online?(timeout: 2)
+  # We are online, if the timeout has not expired
+end
+```
+
 That's it.
 
 ## How to contribute
