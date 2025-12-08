@@ -30,7 +30,7 @@ module Kernel
   # for checking internet availability before performing network-dependent operations
   # or for implementing offline-mode functionality in applications.
   #
-  # @param uri [String] the URI to check connectivity against (default: 'http://www.google.com')
+  # @param uri [String] the URI to check connectivity against (default: 'https://www.google.com/generate_204')
   # @param ttl [Integer] time-to-live for cached results in seconds (default: 300 seconds = 5 minutes)
   # @return [Boolean] true if the URI is reachable and returns HTTP success, false otherwise
   #
@@ -85,7 +85,7 @@ module Kernel
   # @note Returns false for any network-related errors including timeouts, DNS failures,
   #   and unreachable hosts
   # @note Results are cached with a default TTL of 5 minutes to reduce network requests
-  def online?(uri: 'http://www.google.com', ttl: 300)
+  def online?(uri: 'https://www.google.com/generate_204', ttl: 300)
     raise 'The URI is nil' if uri.nil?
     raise 'The TTL is nil' if ttl.nil?
     key = uri.to_s

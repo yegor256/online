@@ -35,31 +35,31 @@ class TestOnline < Minitest::Test
 
   def test_when_online
     WebMock.disable_net_connect!
-    stub_request(:get, 'http://www.google.com/').to_return(body: '')
+    stub_request(:get, 'https://www.google.com/generate_204').to_return(body: '')
     assert_predicate(self, :online?)
   end
 
   def test_when_offline
     WebMock.disable_net_connect!
-    stub_request(:get, 'http://www.google.com/').to_raise(Socket::ResolutionError, 'failure')
+    stub_request(:get, 'https://www.google.com/generate_204').to_raise(Socket::ResolutionError, 'failure')
     refute_predicate(self, :online?)
   end
 
   def test_cache_returns_same_result
     WebMock.disable_net_connect!
-    stub_request(:get, 'http://www.google.com/').to_return(body: '')
+    stub_request(:get, 'https://www.google.com/generate_204').to_return(body: '')
     assert_predicate(self, :online?)
     WebMock.reset!
-    stub_request(:get, 'http://www.google.com/').to_raise(Socket::ResolutionError, 'failure')
+    stub_request(:get, 'https://www.google.com/generate_204').to_raise(Socket::ResolutionError, 'failure')
     assert_predicate(self, :online?)
   end
 
   def test_cache_expires_after_ttl
     WebMock.disable_net_connect!
-    stub_request(:get, 'http://www.google.com/').to_return(body: '')
+    stub_request(:get, 'https://www.google.com/generate_204').to_return(body: '')
     assert online?(ttl: 0)
     WebMock.reset!
-    stub_request(:get, 'http://www.google.com/').to_raise(Socket::ResolutionError, 'failure')
+    stub_request(:get, 'https://www.google.com/generate_204').to_raise(Socket::ResolutionError, 'failure')
     refute online?(ttl: 0)
   end
 
