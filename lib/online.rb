@@ -32,7 +32,7 @@ module Kernel
   #
   # @param uri [String] the URI to check connectivity against (default: 'https://www.google.com/generate_204')
   # @param ttl [Integer] time-to-live for cached results in seconds (default: 300 seconds = 5 minutes)
-  # @param timeout [Integer] open, read and write http timeout (default: 10 seconds)
+  # @param timeout [Integer] open, read and write HTTP timeout (default: 10 seconds)
   # @return [Boolean] true if the URI is reachable and returns HTTP success, false otherwise
   #
   # @example Basic usage - check internet connectivity
