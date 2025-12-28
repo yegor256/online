@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2024-2025 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 
+require 'openssl'
 require 'net/http'
 require 'socket'
 require 'timeout'
@@ -108,7 +109,7 @@ module Kernel
           end
         rescue \
           Socket::ResolutionError, Net::OpenTimeout, Net::ReadTimeout, Net::WriteTimeout,
-          Errno::EHOSTUNREACH, Errno::EINVAL, Errno::EADDRNOTAVAIL, Errno::EBADF
+          Errno::EHOSTUNREACH, Errno::EINVAL, Errno::EADDRNOTAVAIL, Errno::EBADF, OpenSSL::SSL::SSLError
           false
         end
       OnlineOrOffline.cache[key] = { status: status, time: Time.now }

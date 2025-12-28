@@ -3,7 +3,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2024-2025 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 
-require 'webmock/minitest'
 require_relative 'test__helper'
 require_relative '../lib/online'
 
