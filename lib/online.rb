@@ -44,7 +44,7 @@ module Kernel
   #   end
   #
   # @example Check connectivity to a specific service
-  #   if online?('https://api.github.com')
+  #   if online?(uri: 'https://api.github.com')
   #     # Proceed with GitHub API calls
   #   else
   #     # Use cached data or show offline message
@@ -75,7 +75,7 @@ module Kernel
   # @example Conditional feature loading
   #   class WeatherWidget
   #     def display
-  #       if online?('https://api.weather.com')
+  #       if online?(uri: 'https://api.weather.com')
   #         show_live_weather
   #       else
   #         show_cached_weather
