@@ -3,8 +3,8 @@
 # SPDX-FileCopyrightText: Copyright (c) 2024-2025 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 
-require 'openssl'
 require 'net/http'
+require 'openssl'
 require 'socket'
 require 'timeout'
 require 'uri'
@@ -88,8 +88,8 @@ module Kernel
   #   and unreachable hosts
   # @note Results are cached with a default TTL of 5 minutes to reduce network requests
   def online?(uri: 'https://www.google.com/generate_204', ttl: 300, timeout: 10)
-    raise 'The URI is nil' if uri.nil?
-    raise 'The TTL is nil' if ttl.nil?
+    raise(ArgumentError, 'The URI is nil') if uri.nil?
+    raise(ArgumentError, 'The TTL is nil') if ttl.nil?
     key = uri.to_s
     OnlineOrOffline.mutex.synchronize do
       entry = OnlineOrOffline.cache[key]
