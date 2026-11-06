@@ -109,7 +109,8 @@ module Kernel
           end
         rescue \
           Socket::ResolutionError, Net::OpenTimeout, Net::ReadTimeout, Net::WriteTimeout,
-          Errno::EHOSTUNREACH, Errno::EINVAL, Errno::EADDRNOTAVAIL, Errno::EBADF, OpenSSL::SSL::SSLError
+          Errno::EHOSTUNREACH, Errno::ENETUNREACH, Errno::ECONNREFUSED, Errno::ECONNRESET,
+          Errno::EINVAL, Errno::EADDRNOTAVAIL, Errno::EBADF, OpenSSL::SSL::SSLError
           false
         end
       OnlineOrOffline.cache[key] = { status: status, time: Time.now }
