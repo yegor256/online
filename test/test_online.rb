@@ -44,6 +44,24 @@ class TestOnline < Minitest::Test
     refute_predicate(self, :online?)
   end
 
+  def test_when_network_unreachable
+    WebMock.disable_net_connect!
+    stub_request(:get, 'https://www.google.com/generate_204').to_raise(Errno::ENETUNREACH)
+    refute_predicate(self, :online?)
+  end
+
+  def test_when_connection_refused
+    WebMock.disable_net_connect!
+    stub_request(:get, 'https://www.google.com/generate_204').to_raise(Errno::ECONNREFUSED)
+    refute_predicate(self, :online?)
+  end
+
+  def test_when_connection_reset
+    WebMock.disable_net_connect!
+    stub_request(:get, 'https://www.google.com/generate_204').to_raise(Errno::ECONNRESET)
+    refute_predicate(self, :online?)
+  end
+
   def test_cache_returns_same_result
     WebMock.disable_net_connect!
     stub_request(:get, 'https://www.google.com/generate_204').to_return(body: '')
